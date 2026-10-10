@@ -1,0 +1,8 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+data.json
+data.json.bak
+
+lcbot-upload.zip

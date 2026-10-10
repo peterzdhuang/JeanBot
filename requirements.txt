@@ -1,0 +1,5 @@
+discord.py>=2.4,<3
+python-dotenv>=1,<2
+asyncpg>=0.29,<1
+tzdata>=2024.1
+
