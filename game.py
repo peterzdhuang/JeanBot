@@ -3,7 +3,10 @@ from __future__ import annotations
 
 import hashlib
 import random
+import secrets
 from datetime import date, datetime
+
+from catalog import PROBLEM_TOPICS, TOPIC_POOLS, normalize_topic
 
 SHOPKEEPER = "🧌 Jean-Luc the Tax Goblin"
 SHOP_LINES = (
@@ -43,6 +46,24 @@ CLASSES = {"Warden": "Start with +3 HP.", "Scavenger": "+4 room loot.", "Mage": 
 MONSTERS = ("Null Pointer Imp", "Merge Conflict Mimic", "Cache Miss Goblin", "Infinite Loop Lich")
 FLOORS = 10
 MAX_STACK = 99
+MAX_BET = 1000
+
+
+def gamble(member: dict, bet: int, pick: str = "Heads") -> dict:
+    """Settle a fair coin flip inside the caller's locked wallet transaction."""
+    if not member["active"]:
+        raise ValueError("Rejoin the challenge before gambling.")
+    if type(bet) is not int or not 1 <= bet <= MAX_BET:
+        raise ValueError(f"Bet between 1 and {MAX_BET} JC.")
+    if pick not in ("Heads", "Tails"):
+        raise ValueError("Pick Heads or Tails.")
+    if member["wallet"] < bet:
+        raise ValueError(f"You have {member['wallet']} JC. Your bet must fit your wallet.")
+    outcome = secrets.choice(("Heads", "Tails"))
+    won = outcome == pick
+    change = bet if won else -bet
+    member["wallet"] += change
+    return {"outcome": outcome, "won": won, "change": change, "wallet": member["wallet"]}
 
 
 def seeded(value: str) -> random.Random:
@@ -131,7 +152,8 @@ def rename_pet(member: dict, name: str) -> None:
     member["pet"]["name"] = name
 
 
-def start_run(member: dict, user_id: int, day: date, role: str = "Warden") -> dict:
+def start_run(member: dict, user_id: int, day: date, role: str = "Warden", topic: str | None = None) -> dict:
+    topic = normalize_topic(topic)
     if role not in CLASSES:
         raise ValueError("Pick Warden, Scavenger, or Mage.")
     if member["run"] and member["run"]["status"] == "active":
@@ -142,7 +164,7 @@ def start_run(member: dict, user_id: int, day: date, role: str = "Warden") -> di
     maximum = 10 + (3 if role == "Warden" else 0) + (3 if relic == "crystal" else 0)
     member["run"] = {"day": day.isoformat(), "role": role, "floor": 0, "hp": maximum,
                      "max_hp": maximum, "loot": 0, "status": "active", "perks": [],
-                     "choices": [], "seed": f"{user_id}:{day}", "relic": relic}
+                     "choices": [], "seed": f"{user_id}:{day}", "relic": relic, "topic": topic}
     member["last_run_day"] = day.isoformat()
     return member["run"]
 
@@ -159,10 +181,23 @@ def finish_run(member: dict, status: str) -> int:
     return payout
 
 
-def advance_run(member: dict, difficulty: str) -> dict | None:
+def dungeon_suggestions(run: dict) -> list[str]:
+    """A repeatable practice menu for the current floor; never stored in player state."""
+    topic = run.get("topic")
+    if not topic or run["status"] != "active":
+        return []
+    pool = TOPIC_POOLS[topic]
+    return seeded(f"practice:{run['seed']}:{run['floor']}:{topic}").sample(list(pool), min(3, len(pool)))
+
+
+def advance_run(member: dict, difficulty: str, slug: str | None = None) -> dict | None:
     run = member["run"]
     if not run or run["status"] != "active":
         return None
+    topic = run.get("topic")
+    if topic and topic not in PROBLEM_TOPICS.get(slug, set()):
+        return {"text": f"Your **{topic}** dungeon needs a matching catalog problem. "
+                "Use /dungeon status for suggestions. This solve still earns normal rewards.", "waiting": True}
     if run["choices"]:
         return {"text": "Your dungeon is waiting for a perk. Use /dungeon choose before the next room.",
                 "waiting": True}

@@ -1,0 +1,402 @@
+{
+  "generated_at": "2026-10-25T07:29:40.558945+00:00",
+  "scope": "Synthetic in-memory code probes. No live Discord, PostgreSQL, credentials, or real-user data.",
+  "measures_real_user_retention": false,
+  "tracking": {
+    "scope": "synthetic, in-memory tracker behavior only; no production users, database, Discord, or network",
+    "retention_measurement": "No real retention, activation, churn, or reminder-open metrics are available from these probes.",
+    "passed": 6,
+    "probes": [
+      {
+        "probe": "missed_day_recovery",
+        "assertions": "passed",
+        "observed": {
+          "open_day_streak": 7,
+          "streak_after_miss": 0,
+          "return_streak": 1,
+          "best_streak": 7,
+          "lifetime_solves": 8,
+          "comeback_acknowledged": true
+        },
+        "risk_hypothesis": "Raw streaks remain truthful (seven to zero to one); comeback recognition now explicitly acknowledges the return. Best streak and solve history remain intact. Its effect on returning members still needs measurement."
+      },
+      {
+        "probe": "weekly_target_support",
+        "assertions": "passed",
+        "observed": {
+          "participation_days": 4,
+          "eligible_days": 7,
+          "goal_or_target_state_fields": [
+            "weekly_goal"
+          ],
+          "weekly_goal": 4,
+          "goal_days": 4,
+          "goal_met": true,
+          "progress_result_keys": [
+            "days",
+            "eligible",
+            "end",
+            "excused_days",
+            "goal",
+            "goal_days",
+            "goal_met",
+            "known_eligible",
+            "partial",
+            "quest_eligible",
+            "quests",
+            "solves",
+            "start",
+            "total_eligible",
+            "unknown_days"
+          ]
+        },
+        "risk_hypothesis": "The same four practice days now satisfy a configurable four-day weekly goal while retaining the factual 4/7 participation ratio. This addresses a demonstrated missing goal signal; retention impact is unmeasured."
+      },
+      {
+        "probe": "repeat_practice_credit",
+        "assertions": "passed",
+        "observed": {
+          "second_same_day_attempt": "Already counted that problem for this challenge day.",
+          "history_unchanged_after_rejection": true,
+          "next_day_same_problem_accepted": true,
+          "counted_solves": 2
+        },
+        "risk_hypothesis": "A legitimate same-day review attempt receives no additional counted activity and is not stored in history. This is the specified duplicate-count policy, but can frustrate users expecting a practice-attempt diary."
+      },
+      {
+        "probe": "timezone_change_cost",
+        "assertions": "passed",
+        "observed": {
+          "timezone_change_scheduled": {
+            "timezone": "America/Vancouver",
+            "effective_at": "2026-10-26T03:15:00+00:00",
+            "after_day": "2026-10-25"
+          },
+          "streak_before": 7,
+          "streak_after_transition": 7,
+          "best_streak": 7,
+          "preserved_submission_records": 7,
+          "rejoin_required": false
+        },
+        "risk_hypothesis": "A future-effective timezone setting now preserves all seven current streak days and all seven submission records without leaving/rejoining. New timezone labels cannot run backwards during a westward transition. Travel-related friction is reduced in this scenario; real usage still needs observation."
+      },
+      {
+        "probe": "incomplete_legacy_denominators",
+        "assertions": "passed",
+        "observed": {
+          "weekly_days": 1,
+          "weekly_denominator": 1,
+          "total_calendar_eligible": 7,
+          "unknown_days_excluded": 6,
+          "partial_history_flag": true,
+          "unknown_grid_days_in_week": 6
+        },
+        "risk_hypothesis": "The denominator now reads 1/1 known eligible days and separately preserves six unknown days within seven calendar-eligible days. Unknown history is not treated as missed participation; presentation must keep the coverage caveat visible."
+      },
+      {
+        "probe": "inactive_reminders_and_reports",
+        "assertions": "passed",
+        "observed": {
+          "reminder_after_leave": null,
+          "leave_day_report_excused": true,
+          "leave_day_report_solve_count": 0,
+          "weekly_days": 1,
+          "weekly_denominator": 1,
+          "excused_days_excluded": 1,
+          "calendar_eligible_days": 2
+        },
+        "risk_hypothesis": "Paused members receive no reminder, their leave day is excused in the report, and the same excused day is excluded from weekly progress (1/1 known eligible). This resolves the demonstrated cross-view inconsistency."
+      }
+    ]
+  },
+  "discord": {
+    "mode": "synthetic_only_no_live_services",
+    "retention_effects_measured": false,
+    "probes": [
+      {
+        "probe": "first_join_onboarding",
+        "response": "Timezone: **UTC**\nDeadline <t:1791688500:F>.\nWeekly goal: **4 days/week** \u00b7 change it with `/goal days:4`.\nReminders: **on**. Choose a time with `/reminders` or opt out with `/reminders enabled:false`.\n\n**Today's quest:** [Add Two Numbers II](https://leetcode.com/problems/add-two-numbers-ii/) \u00b7 Medium\nAfter solving, open LeetCode's **Submissions** tab, open your accepted attempt, and copy its URL. Press **Submit solve** below or use `/submit`. For a `/submissions/detail/` link, also include the problem URL.\nPST/MST/CST/EST aliases follow daylight saving.\n",
+        "ephemeral": true,
+        "reminders_default_on": true,
+        "actual_problem_link_in_join_response": true,
+        "persistent_button_labels": [
+          "Submit solve",
+          "My progress",
+          "Leaderboard",
+          "Today",
+          "Daily quest",
+          "Snooze 1h",
+          "Reminders"
+        ],
+        "finding": "Join includes the actual daily problem link, weekly goal, timezone/deadline, reminder controls, and instructions for copying the accepted attempt URL. Submit solve opens a form without another typed command."
+      },
+      {
+        "probe": "submission_link_friction",
+        "cases": [
+          {
+            "case": "problem_only",
+            "counted": 0,
+            "error": "Paste the actual submission link ending /submissions/<id>/, not just a problem link.",
+            "response_has_submission_link": false
+          },
+          {
+            "case": "problem_scoped_attempt",
+            "counted": 1,
+            "error": null,
+            "response_has_submission_link": true
+          },
+          {
+            "case": "global_attempt_without_problem",
+            "counted": 0,
+            "error": "For a /submissions/detail/ link, also supply the problem_url field.",
+            "response_has_submission_link": false
+          },
+          {
+            "case": "global_attempt_plus_problem",
+            "counted": 1,
+            "error": null,
+            "response_has_submission_link": true
+          }
+        ],
+        "modal_global_attempt_with_problem_counted": 1,
+        "finding": "Problem-only URLs are rejected. A global attempt URL requires a second problem_url field; the Submit solve form provides both fields. A problem-scoped attempt works with one URL. The actual attempt link is retained in both paths."
+      },
+      {
+        "probe": "one_hundred_pending_reminders",
+        "members": 100,
+        "timezone": "UTC",
+        "messages_at_local_20_00": 2,
+        "duplicate_messages_on_same_tick": 0,
+        "additional_messages_at_local_02_15": 0,
+        "messages_per_full_pending_day": 2,
+        "each_message_includes_opt_out_instruction": true,
+        "finding": "100 new pending members receive two batches at 20:00 and no default late reminder. Repeated scheduler ticks do not resend successful batches. Transport is mocked, so this measures message count, not real rate-limit latency."
+      },
+      {
+        "probe": "opt_out_and_completed_filter",
+        "members": 10,
+        "opted_out": 3,
+        "already_submitted": 1,
+        "reminder_messages": 1,
+        "excluded_members_pinged": 0,
+        "visible_member_ids": [
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10"
+        ],
+        "allowed_mention_member_ids": [
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10"
+        ],
+        "dashboard_has_snooze_or_reminder_toggle_button": true,
+        "finding": "Personal opt-out works immediately and submitted members are excluded. The dashboard exposes Snooze 1h and Reminders; personal time and optional late pings are configurable. Only the six intended pending members are allowed mentions in the single batch."
+      },
+      {
+        "probe": "public_missed_report",
+        "report_messages": 1,
+        "submitted": 1,
+        "missed": 2,
+        "missed_member_identifiers_visible": true,
+        "notification_mentions_enabled": false,
+        "report_excerpt": "**LeetCode daily report \u00b7 2026-10-10**\nSubmitted **1** \u00b7 Missed **2** \u00b7 Excused **0**\nFinal deadline: 2026-10-11T03:15:00+00:00\nQuest: [Add Two Numbers II](https://leetcode.com/problems/add-two-numbers-ii/) \u00b7 Medium\nClosed results; delivered after all personal deadlines.\n**\u2705 Submitted**\n<@1> \u00b7 1 solves \u00b7 quest incomplete\n\u21b3 [Submission 1](https://leetcode.com/problems/two-sum/submissions/111/)\n**\u274c Missed**\n<@2> \u00b7 0 solves \u00b7 quest incomplete\n<@3> \u00b7 0 solves \u00b7 quest incomplete\n**Excused**\nNobody.\n`lc-report:7:2026-10-10:0`",
+        "finding": "The configured channel sees each missed member by name/mention rendering, without notification pings. This matches the requested accountability report; whether visibility discourages return is a user-research question."
+      },
+      {
+        "probe": "return_after_one_missed_day",
+        "prior_streak": 7,
+        "missed_days": 1,
+        "displayed_streak_before_return": 0,
+        "displayed_streak_after_return": 1,
+        "best_streak_retained": 7,
+        "lifetime_solves_retained": 8,
+        "daily_records_retained": 8,
+        "success_title": "Welcome back! Solve recorded",
+        "weekly_progress_and_grid_present": true,
+        "finding": "The streak correctly resets from 7 to 0 after a missed day, then to 1 on return; best streak, lifetime total, history, weekly progress, and grid remain. The success title welcomes the member back and confirms that previous solves and best streak still count."
+      }
+    ]
+  },
+  "storage": {
+    "scope": "Synthetic in-memory fakes only; no .env, sockets, Discord, or PostgreSQL connection.",
+    "timing_limit": "Includes fake whole-table deepcopy/rollback overhead; not a production latency estimate.",
+    "scaling": [
+      {
+        "members": 5,
+        "history_days": 30,
+        "stored_history_rows": 300,
+        "stored_event_rows": 89,
+        "guild_read": {
+          "elapsed_ms": 5.12,
+          "queries": 4,
+          "transactions": 1,
+          "rows_returned": 394,
+          "payload_mib_returned": 0.106,
+          "writes": 0
+        },
+        "one_member_preference_edit": {
+          "elapsed_ms": 10.17,
+          "queries": 7,
+          "transactions": 1,
+          "rows_returned": 394,
+          "payload_mib_returned": 0.106,
+          "writes": 1
+        },
+        "scoped_scheduler_snapshot": {
+          "elapsed_ms": 4.52,
+          "queries": 5,
+          "transactions": 1,
+          "rows_returned": 96,
+          "payload_mib_returned": 0.028,
+          "writes": 0
+        },
+        "quiet_scheduler_tick": {
+          "elapsed_ms": 6.54,
+          "queries": 7,
+          "transactions": 1,
+          "rows_returned": 96,
+          "payload_mib_returned": 0.028,
+          "writes": 0
+        },
+        "discord_sends": 0,
+        "bounded_quiet_scan_checks_passed": true
+      },
+      {
+        "members": 20,
+        "history_days": 90,
+        "stored_history_rows": 3600,
+        "stored_event_rows": 269,
+        "guild_read": {
+          "elapsed_ms": 48.18,
+          "queries": 4,
+          "transactions": 1,
+          "rows_returned": 3889,
+          "payload_mib_returned": 1.161,
+          "writes": 0
+        },
+        "one_member_preference_edit": {
+          "elapsed_ms": 117.23,
+          "queries": 7,
+          "transactions": 1,
+          "rows_returned": 3889,
+          "payload_mib_returned": 1.161,
+          "writes": 1
+        },
+        "scoped_scheduler_snapshot": {
+          "elapsed_ms": 39.57,
+          "queries": 5,
+          "transactions": 1,
+          "rows_returned": 321,
+          "payload_mib_returned": 0.105,
+          "writes": 0
+        },
+        "quiet_scheduler_tick": {
+          "elapsed_ms": 48.09,
+          "queries": 7,
+          "transactions": 1,
+          "rows_returned": 321,
+          "payload_mib_returned": 0.105,
+          "writes": 0
+        },
+        "discord_sends": 0,
+        "bounded_quiet_scan_checks_passed": true
+      },
+      {
+        "members": 30,
+        "history_days": 180,
+        "stored_history_rows": 10800,
+        "stored_event_rows": 539,
+        "guild_read": {
+          "elapsed_ms": 151.37,
+          "queries": 4,
+          "transactions": 1,
+          "rows_returned": 11369,
+          "payload_mib_returned": 3.444,
+          "writes": 0
+        },
+        "one_member_preference_edit": {
+          "elapsed_ms": 315.45,
+          "queries": 7,
+          "transactions": 1,
+          "rows_returned": 11369,
+          "payload_mib_returned": 3.444,
+          "writes": 1
+        },
+        "scoped_scheduler_snapshot": {
+          "elapsed_ms": 116.53,
+          "queries": 5,
+          "transactions": 1,
+          "rows_returned": 471,
+          "payload_mib_returned": 0.158,
+          "writes": 0
+        },
+        "quiet_scheduler_tick": {
+          "elapsed_ms": 130.43,
+          "queries": 7,
+          "transactions": 1,
+          "rows_returned": 471,
+          "payload_mib_returned": 0.158,
+          "writes": 0
+        },
+        "discord_sends": 0,
+        "bounded_quiet_scan_checks_passed": true
+      }
+    ],
+    "failure_flow": {
+      "discord_attachment_and_text_failures": 2,
+      "saved_solves_after_discord_failure": 1,
+      "saved_submissions_after_discord_failure": 1,
+      "duplicate_after_new_namespace_error": "Already counted this submission.",
+      "solves_after_retry": 1,
+      "failed_db_commit_solves": 0,
+      "failed_db_commit_submissions": 0,
+      "failed_db_commit_response": "Couldn't load or save that. Check the database connection and try again."
+    },
+    "uncertain_reminder_delivery": {
+      "injected_failure_raised": true,
+      "persisted_marks_after_failed_commit": {},
+      "history_available": true,
+      "discord_reminder_sends_after_retry": 1,
+      "same_reminder_resent": false,
+      "delivery_statuses_after_retry": [
+        "sent"
+      ],
+      "reconciliation_checks_passed": true
+    },
+    "uncertain_reminder_without_history": {
+      "injected_failure_raised": true,
+      "persisted_marks_after_failed_commit": {},
+      "history_available": false,
+      "discord_reminder_sends_after_retry": 1,
+      "same_reminder_resent": false,
+      "delivery_statuses_after_retry": [
+        "uncertain"
+      ],
+      "reconciliation_checks_passed": true
+    },
+    "uncertain_report_delivery": {
+      "injected_failure_raised": true,
+      "persisted_message_ids_after_failed_commit": [],
+      "discord_report_sends_after_retry": 1,
+      "recovered_message_ids": [
+        9000
+      ],
+      "report_completed": true,
+      "reconciliation_checks_passed": true
+    },
+    "retention_observability": {
+      "real_user_retention_computed": false,
+      "available_post_v3_signal": "Persisted solve received_at/date, member enrollment periods, daily buckets, timezone/deadline snapshots.",
+      "missing_signal": "No command-view/session/visit events, reminder impressions/clicks, exposure experiments, or precise original acquisition timestamp.",
+      "legacy_limit": "v2 has lifetime totals plus at most 30 daily buckets; previous joins may have been overwritten; missing days are unknown.",
+      "cohort_caveats": "Use first observed post-v3 activation cohort; exclude unknown coverage and right-censored users; leavers remain in original cohort denominator.",
+      "interpretation": "A D7/D28 solve-active metric is not user-return retention and cannot be claimed from synthetic measurements."
+    }
+  }
+}
