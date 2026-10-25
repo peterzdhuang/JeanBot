@@ -98,13 +98,15 @@ The builder records ranks, canonical URLs, retrieval date, version, and checksum
 
 A day runs from **03:15 to the next 03:15 in the member's timezone**. At 02:00, submissions count toward the previous date; the exact cutoff starts the new day. PST/PDT/PT map to America/Los_Angeles; MST/MDT/MT to America/Denver; CST/CDT/CT to America/Chicago; EST/EDT/ET to America/New_York. Use America/Phoenix for Arizona, UTC, or another IANA region. Aliases follow DST, and days can last 23 or 25 hours.
 
-Changing a deadline timezone requires leaving/rejoining, preserving history and lifetime totals while resetting the current tracking period. Equivalent deadlines can change without a reset. Old submissions retain their original challenge-date labels. Reports snapshot deadlines so changes do not rewrite past results.
+`/timezone timezone_name` schedules a timezone change for the end of the current challenge day: today keeps its existing deadline, and the streak, history, and lifetime totals carry over. A jump that would skip a challenge date is refused; change through an intermediate timezone instead. A member who leaves before the change takes effect stays inactive with no new reporting obligation, and rejoining with an explicit timezone discards the pending change. Equivalent deadlines can change without a reset. Old submissions retain their original challenge-date labels. Reports snapshot deadlines so changes do not rewrite past results.
 
 Weeks start Monday; months start on the first, using challenge-date labels. Progress separates solves, participation days, and assigned quest completions. Future/inactive days do not inflate denominators. Partial historical coverage is labeled. An open pending day does not break a streak before its cutoff.
 
 ## Reminders and daily reports
 
-Reminder defaults are **20:00 and 02:15 locally**, for active, opted-in members without a solve that day. `/reminders enabled:false` opts out immediately and persists across restarts/rejoin; `true` resumes reminders. Admin `/reminder_settings` controls the schedule and master switch. Existing preferences survive migration.
+Reminders go only to active, opted-in members without a solve that day. New members get one **20:00 local** reminder by default; `/reminders reminder_time:19:30 late_reminder:true` sets a personal time and adds an optional 02:15 final nudge. Members from before this upgrade keep the inherited server schedule (default **20:00 and 02:15 locally**) until they choose a personal time. A personal schedule overrides the inherited server slots. `/reminders enabled:false` opts out immediately and persists across restarts/rejoin; `true` resumes reminders. `/snooze minutes:60` (1–1440) pauses pings for that long without changing the deadline. Admin `/reminder_settings` sets the inherited server slots and the master switch, which disables all reminders. Existing preferences survive migration.
+
+`/goal days:4` sets a weekly participation goal of 3–7 days (default 4); progress cards show days met against the goal. `/buddy action:invite|accept|remove|status member:@friend` pairs members only by mutual consent, and either side can remove the connection.
 
 Reminders catch up for at most an hour; nonexistent DST slots are skipped and repeated slots are marked once. They never ping everyone or roles. Submission and preference state are rechecked before sending.
 
@@ -116,7 +118,8 @@ The scheduler retains participant rosters and delivery markers and catches up de
 
 - Tracking: `/join`, `/leave`, `/submit`, `/status [member]`, `/today`, `/leaderboard`.
 - History/progress: `/history [member] [page]`, `/progress period:week|month`, `/quest`.
-- Preferences: `/reminders enabled`.
+- Preferences: `/reminders [enabled] [reminder_time] [late_reminder]`, `/snooze [minutes]`, `/goal [days]`, `/timezone timezone_name`.
+- Social: `/buddy action [member]`.
 - Admin: `/setup channel [timezone_name]`, `/reminder_settings`, `/storage`.
 
 Game commands are removed during slash-command synchronization. Legacy game modules/data remain inert for compatibility; tracking awards no currency, XP, pet growth, or dungeon progress.
@@ -134,7 +137,7 @@ The implementation workspace cannot resolve the dependency download host, so dep
 
 ## Retention review and synthetic probes
 
-See [retention_review.md](retention_review.md) for executed behavioral/scaling probes, comparisons with habit-building apps, prioritized recommendations, and a prospective retention measurement plan. [retention_probe_results.json](retention_probe_results.json) contains the synthetic evidence. These are code observations, not actual user-retention rates; this review changes no runtime behavior or history.
+[retention_review.md](retention_review.md) is the **historical baseline** review, written before weekly goals, personal reminder timing, snooze, `/timezone`, and buddies were added. It covers executed behavioral/scaling probes, comparisons with habit-building apps, prioritized recommendations, and a prospective retention measurement plan. Its original evidence is preserved unchanged in [retention_probe_results_baseline.json](retention_probe_results_baseline.json); [retention_probe_results.json](retention_probe_results.json) is the latest re-run against the current code. These are code observations, not actual user-retention rates; this review changes no runtime behavior or history.
 
 ```sh
 python3 retention_probes.py --output retention_probe_results.json

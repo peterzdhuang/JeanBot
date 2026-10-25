@@ -2,6 +2,8 @@
 
 Evaluated October 25, 2026. Runtime behavior and stored user history were not changed by this review.
 
+> **Historical baseline.** This review describes the bot before weekly goals, personal reminder timing, snooze, comeback messages, `/timezone`, and study buddies were implemented in response to it. Its probe evidence is preserved in `retention_probe_results_baseline.json`; `retention_probe_results.json` holds the latest re-run against the current code.
+
 The bot has a useful foundation: a shared daily problem, personal deadlines, durable submissions, activity squares, opt-out reminders, and visible progress. Its main weaknesses are reminder noise, fragile streak motivation, and a daily success threshold that gives no credit for meaningful unsuccessful practice. Improve the habit loop before adding more features.
 
 These are code and synthetic-user findings, not measured churn. There is no production export in this workspace, and these probes did not connect to Discord/PostgreSQL or read credentials. Actual retention percentages, notification fatigue, and causal effects on users cannot be inferred from passing tests or synthetic personas.

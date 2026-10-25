@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-25T07:29:40.558945+00:00",
+  "generated_at": "2026-10-25T07:43:11.968193+00:00",
   "scope": "Synthetic in-memory code probes. No live Discord, PostgreSQL, credentials, or real-user data.",
   "measures_real_user_retention": false,
   "tracking": {
@@ -233,7 +233,7 @@
         "stored_history_rows": 300,
         "stored_event_rows": 89,
         "guild_read": {
-          "elapsed_ms": 5.12,
+          "elapsed_ms": 4.85,
           "queries": 4,
           "transactions": 1,
           "rows_returned": 394,
@@ -241,7 +241,7 @@
           "writes": 0
         },
         "one_member_preference_edit": {
-          "elapsed_ms": 10.17,
+          "elapsed_ms": 8.08,
           "queries": 7,
           "transactions": 1,
           "rows_returned": 394,
@@ -257,7 +257,7 @@
           "writes": 0
         },
         "quiet_scheduler_tick": {
-          "elapsed_ms": 6.54,
+          "elapsed_ms": 6.35,
           "queries": 7,
           "transactions": 1,
           "rows_returned": 96,
@@ -273,7 +273,7 @@
         "stored_history_rows": 3600,
         "stored_event_rows": 269,
         "guild_read": {
-          "elapsed_ms": 48.18,
+          "elapsed_ms": 33.98,
           "queries": 4,
           "transactions": 1,
           "rows_returned": 3889,
@@ -281,7 +281,7 @@
           "writes": 0
         },
         "one_member_preference_edit": {
-          "elapsed_ms": 117.23,
+          "elapsed_ms": 73.38,
           "queries": 7,
           "transactions": 1,
           "rows_returned": 3889,
@@ -289,7 +289,7 @@
           "writes": 1
         },
         "scoped_scheduler_snapshot": {
-          "elapsed_ms": 39.57,
+          "elapsed_ms": 29.13,
           "queries": 5,
           "transactions": 1,
           "rows_returned": 321,
@@ -297,7 +297,7 @@
           "writes": 0
         },
         "quiet_scheduler_tick": {
-          "elapsed_ms": 48.09,
+          "elapsed_ms": 34.77,
           "queries": 7,
           "transactions": 1,
           "rows_returned": 321,
@@ -313,7 +313,7 @@
         "stored_history_rows": 10800,
         "stored_event_rows": 539,
         "guild_read": {
-          "elapsed_ms": 151.37,
+          "elapsed_ms": 102.7,
           "queries": 4,
           "transactions": 1,
           "rows_returned": 11369,
@@ -321,7 +321,7 @@
           "writes": 0
         },
         "one_member_preference_edit": {
-          "elapsed_ms": 315.45,
+          "elapsed_ms": 207.19,
           "queries": 7,
           "transactions": 1,
           "rows_returned": 11369,
@@ -329,7 +329,7 @@
           "writes": 1
         },
         "scoped_scheduler_snapshot": {
-          "elapsed_ms": 116.53,
+          "elapsed_ms": 85.66,
           "queries": 5,
           "transactions": 1,
           "rows_returned": 471,
@@ -337,7 +337,7 @@
           "writes": 0
         },
         "quiet_scheduler_tick": {
-          "elapsed_ms": 130.43,
+          "elapsed_ms": 90.93,
           "queries": 7,
           "transactions": 1,
           "rows_returned": 471,

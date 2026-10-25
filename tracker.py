@@ -182,11 +182,12 @@ def apply_pending_timezone(guild: dict, user_id: int, now: datetime) -> bool:
     if not pending or now < datetime.fromisoformat(pending["effective_at"]):
         return False
     after = date.fromisoformat(pending["after_day"])
-    for period in member.get("periods", []):
-        if period.get("end") is None:
-            period["end"] = after.isoformat()
-    member["periods"].append({"start": (after + timedelta(days=1)).isoformat(), "end": None,
-                              "timezone": pending["timezone"]})
+    if member.get("active", True):  # A member who left keeps the zone but gains no new period.
+        for period in member.get("periods", []):
+            if period.get("end") is None:
+                period["end"] = after.isoformat()
+        member["periods"].append({"start": (after + timedelta(days=1)).isoformat(), "end": None,
+                                  "timezone": pending["timezone"]})
     member.setdefault("timezone_history", []).append({"from": member["timezone"],
         "to": pending["timezone"], "effective_at": pending["effective_at"], "after_day": pending["after_day"]})
     member["timezone"] = pending["timezone"]
@@ -307,7 +308,7 @@ def enroll(guild: dict, user_id: int, day: date, zone: str | None = None) -> boo
         if row is not None and not row.get("closed"):
             row["excused"] = False
             current["excused_days"] = [value for value in current.get("excused_days", []) if value != day.isoformat()]
-        current.update(joined=day.isoformat(), active=True, timezone=zone, left_day=None,
+        current.update(joined=day.isoformat(), active=True, timezone=zone, left_day=None, pending_timezone=None,
                        period_solved=count, completed_days=int(bool(count)),
                        streak=int(bool(count)), last_solved=day.isoformat() if count else None)
     else:

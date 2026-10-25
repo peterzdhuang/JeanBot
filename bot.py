@@ -767,7 +767,7 @@ async def buddy(interaction: discord.Interaction, action: BuddyAction = "status"
     await execute(interaction, build, write=True, private=True)
 
 
-@bot.tree.command(name="reminder_settings", description="Admin: set local reminder hours or disable server reminders")
+@bot.tree.command(name="reminder_settings", description="Admin: set inherited server reminder hours or disable server reminders")
 @app_commands.guild_only()
 @app_commands.default_permissions(manage_guild=True)
 @app_commands.checks.has_permissions(manage_guild=True)
@@ -780,8 +780,9 @@ async def reminder_settings(interaction: discord.Interaction, enabled: bool = Tr
         slots = [f"{first_hour:02}:00", "02:15" if final_hour == 2 else f"{final_hour:02}:00"]
         data["reminders_enabled"] = enabled
         data["reminder_times"] = sorted(set(slots), key=lambda slot: (int(slot[:2]) * 60 + int(slot[3:]) - 195) % 1440)
-        return card("Reminder schedule saved", f"{', '.join(data['reminder_times'])} in each member's timezone. "
-                    "Personal opt-outs remain in effect." if enabled else "Server reminders disabled.", GREEN)
+        return card("Reminder schedule saved", f"{', '.join(data['reminder_times'])} in each member's timezone, "
+                    "for members on the inherited server schedule. Personal reminder times and opt-outs "
+                    "override these slots." if enabled else "Server reminders disabled.", GREEN)
     await execute(interaction, build, write=True, private=True)
 
 

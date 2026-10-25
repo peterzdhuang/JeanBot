@@ -40,6 +40,7 @@ Migration must be versioned, transactional, repeatable without duplication, and 
 - Keep existing timezone-change and leave/rejoin rules unless changed in a separate request. Leaving/rejoining must never delete history, reset lifetime totals, or permit a duplicate daily quest claim.
 - Persist the timezone and UTC deadline used for each participant/day. Later timezone changes must not rewrite past reports or move an already-open deadline.
 - `/setup` changes the default for future enrollments; existing players keep their timezone.
+- `/timezone` schedules a change effective at the member's current deadline, preserving the open day, streak, and history; jumps that would skip a challenge date are refused. Leaving before it takes effect creates no new enrollment period or reporting obligation; rejoining with an explicit timezone discards the pending change.
 
 ## One daily Medium quest
 
@@ -92,10 +93,10 @@ Use the member's challenge-date labels: weeks start Monday and months start on t
 
 Retain the existing minute-based background scheduler as the cron-equivalent. Run one scheduler owner; do not also configure an independent cron process that sends duplicate pings.
 
-- Default reminder slots remain **20:00** and **02:15**, evaluated in each member's local timezone for their open challenge day.
+- The inherited server slots default to **20:00** and **02:15**, evaluated in each member's local timezone for their open challenge day. Existing members keep the inherited schedule; new members default to a single personal 20:00 reminder with an optional 02:15 `late_reminder`. A personal schedule overrides the inherited server slots. `/snooze` pauses pings for 1–1440 minutes without moving the deadline.
 - Ping only active, opted-in members who have not submitted any qualifying solve for that day. Include the quest link, personal deadline, submission instructions, and `/reminders enabled:false`.
 - `/reminders enabled:false` immediately stops personal reminder pings; `true` resumes them. Preserve opt-out across restarts, migration, and rejoin. Display the setting in `/status` and onboarding.
-- Keep server-wide enable/disable and configurable local reminder slots through admin-only `/reminder_settings`. Personal opt-out always takes precedence.
+- Keep server-wide enable/disable and configurable inherited reminder slots through admin-only `/reminder_settings`. Personal opt-out and personal reminder times always take precedence over inherited slots.
 - Recheck preferences and completion immediately before sending. Batch mentions safely and allow mentions only for the intended recipients.
 - Persist delivery state keyed by guild/member/challenge-date/slot. Retry transient failures with bounded backoff and respect Discord rate limits.
 - Preserve the one-hour catch-up window for missed slots; skip stale reminders after that and all reminders after the personal deadline. Skip nonexistent DST slots and send repeated-hour slots at most once.
@@ -119,7 +120,7 @@ Example: if D's participant deadlines are 03:15 America/New_York and 03:15 Ameri
 
 ## Commands and interface
 
-Keep `/setup`, `/join`, `/leave`, `/submit`, `/status`, `/today`, `/history`, `/quest`, `/leaderboard`, `/reminders`, `/reminder_settings`, and `/storage`; add `/progress`.
+Keep `/setup`, `/join`, `/leave`, `/submit`, `/status`, `/today`, `/history`, `/quest`, `/leaderboard`, `/reminders`, `/reminder_settings`, and `/storage`; add `/progress`, `/goal` (weekly participation goal, 3–7 days, default 4), `/snooze`, `/timezone`, and `/buddy` (mutual-consent study buddies).
 
 - `/today` shows each active member's open challenge date, submitted/pending status, quest completion, and personal deadline. Different timezones may currently have different date labels.
 - `/leaderboard` uses current streak, then fewer missed eligible days, then lifetime solves as tie breakers; remove XP ranking.

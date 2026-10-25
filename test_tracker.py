@@ -208,6 +208,33 @@ class TrackerTests(unittest.TestCase):
         self.assertEqual(self.guild["roster"][DAY.isoformat()]["1"]["deadline"], original_cutoff.isoformat())
         self.assertFalse(apply_pending_timezone(self.guild, 1, original_cutoff))
 
+    def test_leaving_before_pending_timezone_takes_effect_creates_no_new_obligation(self):
+        member = self.guild["members"]["1"]
+        change_timezone(self.guild, 1, "EST", NOW)
+        leave_member(self.guild, 1, NOW)
+        periods = copy.deepcopy(member["periods"])
+        cutoff = deadline(DAY, "PST")
+        sync_roster(self.guild, cutoff + timedelta(days=2))
+        self.assertFalse(member["active"])
+        self.assertEqual(member["periods"], periods)
+        self.assertEqual(member["timezone"], "America/New_York")
+        for later in (DAY + timedelta(days=1), DAY + timedelta(days=2)):
+            self.assertNotIn("1", self.guild["roster"].get(later.isoformat(), {}))
+        rejoin_day = DAY + timedelta(days=3)
+        enroll(self.guild, 1, rejoin_day, "CST")
+        self.assertEqual([p for p in member["periods"] if p["end"] is None],
+                         [{"start": rejoin_day.isoformat(), "end": None, "timezone": "America/Chicago"}])
+
+    def test_rejoin_discards_stale_pending_timezone(self):
+        member = self.guild["members"]["1"]
+        change_timezone(self.guild, 1, "EST", NOW)
+        leave_member(self.guild, 1, NOW)
+        enroll(self.guild, 1, DAY, "PST")
+        self.assertIsNone(member["pending_timezone"])
+        sync_roster(self.guild, deadline(DAY, "PST"))
+        self.assertEqual(member["timezone"], "America/Los_Angeles")
+        self.assertEqual(sum(p["end"] is None for p in member["periods"]), 1)
+
     def test_westward_timezone_transition_never_reverses_date_or_duplicates_day(self):
         member = self.guild["members"]["1"]
         member["timezone"] = "UTC"

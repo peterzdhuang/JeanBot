@@ -2,6 +2,7 @@
 import asyncio
 import copy
 import json
+import os
 import tempfile
 import unittest
 from contextlib import asynccontextmanager
@@ -381,7 +382,8 @@ class StorageTests(unittest.IsolatedAsyncioTestCase):
             self.assertIn("Duck''s pet; DROP TABLE example; --", script)
             self.assertIn('Restore requires empty original tables', script)
             self.assertIn('COMMIT;', script)
-            self.assertEqual(path.stat().st_mode & 0o777, 0o600)
+            if os.name == 'posix':  # Windows ignores POSIX permission bits.
+                self.assertEqual(path.stat().st_mode & 0o777, 0o600)
             with self.assertRaises(FileExistsError):
                 await self.store.export_v2(path)
         self.assertEqual(self.connection.players, before)
